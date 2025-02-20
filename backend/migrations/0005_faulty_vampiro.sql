@@ -1,0 +1,1 @@
+ALTER TABLE `knowledges` RENAME COLUMN "type" TO "content_type";

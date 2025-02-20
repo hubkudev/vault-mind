@@ -24,30 +24,32 @@ export const usersTable = sqliteTable("users", {
     userEmailIdx: index("user_email_idx").on(table.email)
 }));
 
-export const projectsTable = sqliteTable("projects", {
+export const vaultsTable = sqliteTable("vaults", {
     id: text("id")
         .primaryKey()
         .$default(() => crypto.randomUUID()),
     name: text("name").notNull(),
     desc: text("desc"),
     bannerURL: text("banner_url"),
-    created_at: text("created_at")
+    userId: text("user_id")
+        .notNull()
+        .references(() => usersTable.id, { onDelete: "cascade" }),
+    createdAt: text("created_at")
         .notNull()
         .default(sql`(current_timestamp)`),
 });
 
-export const knowledges = sqliteTable("knowledges", {
+export const knowledgeTable = sqliteTable("knowledges", {
     id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    type: text("type", { length: 50 })
-        .$type<"text" | "document">()
-        .notNull(),
-    name: text("name"),
-    desc: text("desc"),
-    embedding: blob("embedding", { mode: "buffer" }).notNull(),
-    projectId: text("project_id")
+    contentType: text("content_type", { length: 50 }).notNull(),
+    content: text("content"),
+    userId: text("user_id")
         .notNull()
-        .references(() => projectsTable.id, { onDelete: "cascade" }),
-    created_at: text("created_at")
+        .references(() => usersTable.id, { onDelete: "cascade" }),
+    vaultId: text("vault_id")
+        .notNull()
+        .references(() => vaultsTable.id, { onDelete: "cascade" }),
+    createdAt: text("created_at")
         .notNull()
         .default(sql`(current_timestamp)`),
 });

@@ -7,7 +7,14 @@ authRouter.get("/google", passport.authenticate("google", { scope: ["profile", "
 
 authRouter.get("/google/callback", passport.authenticate("google", {
     failureRedirect: "/login",
-    successRedirect: "/"
+    successRedirect: `${process.env.CLIENT_URL}/vault`
 }));
+
+authRouter.get('/logout', function(req, res, next) {
+    req.logout(function(err) {
+        if (err) { return next(err); }
+        res.redirect(`${process.env.CLIENT_URL}/vault`);
+    });
+});
 
 export default authRouter;
